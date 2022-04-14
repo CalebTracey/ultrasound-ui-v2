@@ -5,12 +5,12 @@ const express = require('express')
 const path = require('path')
 
 const app = express()
-const port = process.env.PORT || 8080
+const port = process.env.PORT || 6088
 
 app.use(express.static(path.join(__dirname, 'build')))
 
 // This route serves the React app
-app.get('/', (req, res) =>
+app.get('/*', (req, res) =>
     res.sendFile(path.resolve(__dirname, 'build', 'index.html'))
 )
 

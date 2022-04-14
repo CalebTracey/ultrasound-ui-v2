@@ -8,6 +8,7 @@ import axios, {
     AxiosError,
 } from 'axios'
 
+import { Console } from 'console'
 import TokenService from './token-service'
 import EventBus from '../common/EventBus'
 import { messageSlice, newError } from '../redux/slices/message'
@@ -48,9 +49,15 @@ class Http {
     }
 
     initHttp() {
+        // might get the address from the docker container
+        const url =
+            `${process.env.PUBLIC_URL}/api/` == null
+                ? `${process.env.PUBLIC_URL}/api/`
+                : 'http://localhost:6080/api/'
+        console.log(`URL is ${url}`)
+
         const http = axios.create({
-            // baseURL: `${process.env.PUBLIC_URL}/api/`,
-            baseURL: 'http://localhost:8080/api/',
+            baseURL: url,
             headers,
             withCredentials: true,
         })
