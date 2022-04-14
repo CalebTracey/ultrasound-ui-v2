@@ -1,2 +1,0 @@
-(this["webpackJsonpultrasound-client"]=this["webpackJsonpultrasound-client"]||[]).push([[16],{354:function(t,n,e){"use strict";e.r(n);e(0);var s=e(7),c=e(6);n.default=Object(s.i)((function(){return Object(c.jsx)("div",{className:"content-wrapper"})}))}}]);
-//# sourceMappingURL=16.dd797b8b.chunk.js.map

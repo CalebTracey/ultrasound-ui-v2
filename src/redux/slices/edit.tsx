@@ -120,12 +120,10 @@ export const importData = createAsyncThunk(
 )
 
 export const updateData = createAsyncThunk('edit/update', async (_, thunkApi) =>
-    api
-        .post('/S3/update/newData')
-        .then((res: AxiosResponse<IMessageResponse>) => {
-            thunkApi.dispatch(getAllClassifications())
-            thunkApi.dispatch(newMessage(res.data.message))
-        })
+    api.post('/S3/synch').then((res: AxiosResponse<IMessageResponse>) => {
+        thunkApi.dispatch(getAllClassifications())
+        thunkApi.dispatch(newMessage(res.data.message))
+    })
 )
 
 const editSlice = createSlice({

@@ -57,7 +57,7 @@ const Home: FC = () => {
                                 <hr className="my-2" />
                             </Media>
                             <p className="content___text">
-                                Please register and login to continue
+                                Please register or login to continue
                             </p>
                         </Media>
                     </Container>

@@ -85,30 +85,30 @@ const App: FC = () => {
         }
     }, [dispatch, history, isAuth, loading, contentPath, user])
 
-    useEffect(() => {
-        const ac = new AbortController()
-        if (subId !== '') {
-            eventBus.on('updateSubMenus', ac, () => {
-                getSubMenu()
-            })
-        }
-        return () => {
-            ac.abort()
-            eventBus.remove('updateSubMenus', getSubMenu)
-        }
-    }, [getSubMenu, subMenuResponse, subId])
+    // useEffect(() => {
+    //     const ac = new AbortController()
+    //     if (subId !== '') {
+    //         eventBus.on('updateSubMenus', ac, () => {
+    //             getSubMenu()
+    //         })
+    //     }
+    //     return () => {
+    //         ac.abort()
+    //         eventBus.remove('updateSubMenus', getSubMenu)
+    //     }
+    // }, [getSubMenu, subMenuResponse, subId])
 
-    useEffect(() => {
-        const ac = new AbortController()
+    // useEffect(() => {
+    //     const ac = new AbortController()
 
-        eventBus.on('updateItems', ac, () => {
-            getItems()
-        })
-        return () => {
-            ac.abort()
-            eventBus.remove('updateItems', getItems)
-        }
-    }, [getItems, itemResponse])
+    //     eventBus.on('updateItems', ac, () => {
+    //         getItems()
+    //     })
+    //     return () => {
+    //         ac.abort()
+    //         eventBus.remove('updateItems', getItems)
+    //     }
+    // }, [getItems, itemResponse])
 
     return <RoutesContainer />
 }
