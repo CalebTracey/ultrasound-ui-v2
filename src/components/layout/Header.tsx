@@ -10,27 +10,27 @@ import { importData, updateData } from '../../redux/slices/edit'
 import { newError } from '../../redux/slices/message'
 import { api } from '../../service/api'
 import { IAppUser } from '../../schemas'
-import { userRegister, showEditToggle } from '../../redux/slices/auth'
+import { userRegister } from '../../redux/slices/auth'
 import WarningModal from '../WarningModal'
 import DatabaseDropdown from '../DatabaseDropdown'
 
 const Header: FC = () => {
     const { auth } = useAppSelector((state) => state)
-    const { user, showEdit } = auth
+    const { user } = auth
     const [content, setContent] = useState<string | null>(null)
     const [initModal, setInitModal] = useState(false)
     const [updateModal, setUpdateModal] = useState(false)
     const [dropDownOpen, setDropdownOpen] = useState(false)
-    const [switchChecked, setSwitchChecked] = useState(false)
+    // const [switchChecked, setSwitchChecked] = useState(false)
     const isAdmin = user.roles?.includes('ROLE_ADMIN')
     const dispatch = useAppDispatch()
     const isUser = (value: unknown): value is IAppUser => {
         return !!value && !!(value as IAppUser)
     }
-    const handleSwitchChange = () => {
-        dispatch(showEditToggle())
-        setSwitchChecked(!switchChecked)
-    }
+    // const handleSwitchChange = () => {
+    //     dispatch(showEditToggle())
+    //     setSwitchChecked(!switchChecked)
+    // }
     const dropDownToggle = () => setDropdownOpen(!dropDownOpen)
 
     const databaseInitToggle = useCallback(() => {
@@ -59,18 +59,18 @@ const Header: FC = () => {
         getDate()
     }, [])
 
-    useEffect(() => {
-        if (switchChecked !== showEdit) {
-            setSwitchChecked(showEdit)
-        }
-    }, [switchChecked, showEdit])
+    // useEffect(() => {
+    //     if (switchChecked !== showEdit) {
+    //         setSwitchChecked(showEdit)
+    //     }
+    // }, [switchChecked, showEdit])
 
     return (
         <>
             <header style={{ zIndex: 10 }}>
                 <div className="button-wrapper">
                     <div className="date">{content}</div>
-                    {isAdmin && showEdit && (
+                    {isAdmin && (
                         <div
                             className="form-group"
                             style={{ marginLeft: '1rem' }}
@@ -78,7 +78,7 @@ const Header: FC = () => {
                             <DatabaseDropdown
                                 dropDownOpen={dropDownOpen}
                                 dropDownToggle={dropDownToggle}
-                                databaseInitToggle={databaseInitToggle}
+                                // databaseInitToggle={databaseInitToggle}
                                 databaseUpdateToggle={databaseUpdateToggle}
                             />
                         </div>
@@ -88,7 +88,7 @@ const Header: FC = () => {
                     {user.email && isUser(userRegister) && (
                         <UserInfoHeader email={user.email} />
                     )}
-                    {isAdmin && (
+                    {/* {isAdmin && (
                         <div
                             style={{
                                 position: 'absolute',
@@ -105,7 +105,7 @@ const Header: FC = () => {
                                 />
                             </label>
                         </div>
-                    )}
+                    )} */}
                     {/* <SearchBar /> */}
                 </div>
             </header>

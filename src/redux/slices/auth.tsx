@@ -72,14 +72,26 @@ export const logout = createAsyncThunk('auth/logout', async () => {
     return AuthService.logoutService()
 })
 
+// export const userRegister = createAsyncThunk(
+//     'auth/register',
+//     async (regCredentials: TRegister) => {
+//         const response = await api.post<TRegister, TUserLoginResponse>(
+//             `auth/sign-up`,
+//             regCredentials
+//         )
+//         TokenService.setUser(response.data)
+//         return response.data
+//     }
+// )
+
 export const userRegister = createAsyncThunk(
     'auth/register',
     async (regCredentials: TRegister) => {
-        const response = await api.post<TRegister, TUserLoginResponse>(
+        const response = await api.post<TRegister>(
             `auth/sign-up`,
             regCredentials
         )
-        TokenService.setUser(response.data)
+
         return response.data
     }
 )
@@ -147,21 +159,26 @@ export const authSlice = createSlice({
             state.error = 'Login failed - try again'
         })
         builder.addCase(userRegister.fulfilled, (state, action) => {
-            const userData = action.payload
-            if (isUser(userData)) {
-                state.user = userData
-                state.isAuth = true
-                state.loading = 'successful'
-                state.error = ''
-                if (userData.roles.includes('ROLE_ADMIN')) {
-                    state.contentPath = '/dashboard/admin'
-                }
-            } else {
-                state.isAuth = false
-                state.loading = 'idle'
-                state.user = {}
-                state.error = 'Registration failed'
-            }
+            state.user = {}
+            state.isAuth = false
+            state.loading = 'successful'
+            state.error = 'Registration received. Account pending.'
+
+            // const userData = action.payload
+            // if (isUser(userData)) {
+            //     state.user = userData
+            //     state.isAuth = true
+            //     state.loading = 'successful'
+            //     state.error = ''
+            //     if (userData.roles.includes('ROLE_ADMIN')) {
+            //         state.contentPath = '/dashboard/admin'
+            //     }
+            // } else {
+            //     state.isAuth = false
+            //     state.loading = 'idle'
+            //     state.user = {}
+            //     state.error = 'Registration failed'
+            // }
         })
         builder.addCase(userRegister.rejected, (state) => {
             state.isAuth = false

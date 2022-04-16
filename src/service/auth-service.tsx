@@ -12,6 +12,9 @@ type TNewUser = {
     email: string
     password: string
 }
+type TNewUserResponse = {
+    message: string
+}
 type TUserLogin = {
     username: string
     password: string
@@ -30,8 +33,8 @@ const userDetails = async (username: string): Promise<TUserDetails> => {
     return response.data
 }
 
-const registerService = async (data: TNewUser): Promise<string> =>
-    api.post<TNewUser, string>(`auth/sign-up`, data)
+const registerService = async (data: TNewUser): Promise<TNewUserResponse> =>
+    api.post<TNewUser, TNewUserResponse>(`auth/sign-up`, data)
 
 const loginService = async (
     details: TUserLogin
