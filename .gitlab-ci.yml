@@ -18,8 +18,8 @@ stages:
     - push-image:prod
     - deploy:prod
 
-test:
-    stage: build
+test-build:
+    stage: test
     image:
         name: gcr.io/kaniko-project/executor:debug-edge
         entrypoint: ['']
