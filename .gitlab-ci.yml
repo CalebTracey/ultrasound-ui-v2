@@ -68,12 +68,11 @@ release-image:prod:
           when: never
         - if: '$CI_COMMIT_REF_NAME =~ /main|^develop/i'
     dependencies:
-        - test
         - push-image:prod
 
 .deploy:
     dependencies:
-        - test
+        - test-build
 
 .common:prod:
     environment:
