@@ -53,7 +53,7 @@ class Http {
         const url =
             `${process.env.PUBLIC_URL}/api/` == null
                 ? `${process.env.PUBLIC_URL}/api/`
-                : 'http://localhost:6080/api/'
+                : 'https://ultrasound-api.herokuapp.com'
         console.log(`URL is ${url}`)
 
         const http = axios.create({
