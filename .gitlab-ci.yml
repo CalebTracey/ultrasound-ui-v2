@@ -29,6 +29,11 @@ test-build:
         - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
     script:
         - /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile --no-push
+    rules:
+      - if: '$CI_COMMIT_REF_NAME =~ /main|^develop/i'
+        when: never
+      - if: '$CI_COMMIT_REF_NAME =~ /main|^develop|^FEAT.*$/i'
+      - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
 
 push-image:prod:
   stage: push-image:prod
@@ -42,7 +47,7 @@ push-image:prod:
     - echo "{\"auths\":{\"$HEROKU_REGISTRY\":{\"username\":\"_\",\"password\":\"$HEROKU_API_KEY\"}}}" > /kaniko/.docker/config.json
   script:
     - echo "$TAG"
-    - /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile --destination $HEROKU_REGISTRY/$HEROKU_APP/web
+    - /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile --destination $HEROKU_REGISTRY/$HEROKU_APP/web    
   rules:
     - if: '$CI_COMMIT_REF_NAME =~ /main|^develop/i'
 
@@ -57,6 +62,11 @@ release-image:prod:
   script:
     - echo "$HEROKU_API_KEY" | docker login --username=_ --password-stdin registry.heroku.com
     - docker run --rm -e HEROKU_API_KEY=$HEROKU_API_KEY wingrunr21/alpine-heroku-cli container:release web --app $HEROKU_APP
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: never
+    - if: '$CI_COMMIT_REF_NAME =~ /main|^develop/i'
+      when: manual
   dependencies:
     - push-image:prod
 
@@ -72,11 +82,10 @@ release-image:prod:
     name: prod
   variables:
     ENVIRONMENT: "prod"
-    CONFIG_PATH: ./src/main/resources/application-prod.properties
   rules:
-    - if: "$CI_COMMIT_BRANCH"
+    - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
       when: never
-    - if: '$CI_COMMIT_REF_NAME == "main"'
-      when: never
+    - if: '$CI_COMMIT_REF_NAME =~ /main|^develop/i'
+      when: manual
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
       when: never
