@@ -62,7 +62,7 @@
     "scripts": {
         "heroku-postbuild": "yarn install",
         "start-dev": "REACT_APP_GIT_HASH=\"$(git rev-parse HEAD)\" react-scripts start",
-        "start": "node server.js",
+        "start": "react-scripts start",
         "build": "react-scripts build",
         "test": "react-scripts test",
         "eject": "react-scripts eject",
