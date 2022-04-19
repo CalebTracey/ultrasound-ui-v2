@@ -1,17 +1,31 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 const express = require('express')
-// eslint-disable-next-line no-unused-vars
-// const bodyParser = require('body-parser');
+const cors = require('cors')
 const path = require('path')
 
 const app = express()
-const port = process.env.PORT || 6088
+const PORT = process.env.PORT || 6088
+
+app.use(
+    cors({
+        origin: [
+            'http://localhost:80',
+            'https://ultrasound-api.herokuapp.com',
+            'https://ultrasound-ui.herokuapp.com',
+        ],
+        methods: ['GET', 'POST', 'DELETE', 'UPDATE', 'PUT', 'PATCH'],
+    })
+)
+
+const server = app.listen(PORT, () => {
+    const { port } = server.address()
+    // eslint-disable-next-line no-console
+    console.log(`Server listening on port ${port}`)
+})
 
 app.use(express.static(path.join(__dirname, 'build')))
 
 // This route serves the React app
-app.get('/*', (req, res) =>
+app.get('/*', (req, res) => {
     res.sendFile(path.resolve(__dirname, 'build', 'index.html'))
-)
-
-app.listen(port, () => console.log(`Server listening on port ${port}`))
+})

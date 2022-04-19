@@ -5,10 +5,8 @@ import { useAppSelector, useAppDispatch } from './redux/hooks'
 import eventBus from './common/EventBus'
 import './styles.scss'
 import { logout, defineContentPath } from './redux/slices/auth'
-import useItems from './hooks/useItems'
 import { clearMessage } from './redux/slices/message'
 import { IAppUser } from './schemas'
-import useSubMenu from './hooks/useSubMenu'
 import RoutesContainer from './containers/RoutesContainer'
 
 const App: FC = () => {
@@ -32,18 +30,6 @@ const App: FC = () => {
     const isString = (value: unknown): value is string => {
         return !!value && !!(value as string)
     }
-    const [itemResponse, getItems] = useItems({
-        parentId: '',
-        list: [],
-        isLoading: false,
-        error: null,
-    })
-    const [subMenuResponse, getSubMenu] = useSubMenu({
-        id: subId,
-        subMenuObj: {},
-        isLoading: false,
-        error: null,
-    })
 
     useEffect(() => {
         if (isString(subMenuSelectedId)) {
@@ -84,31 +70,6 @@ const App: FC = () => {
             dispatch(defineContentPath(user))
         }
     }, [dispatch, history, isAuth, loading, contentPath, user])
-
-    // useEffect(() => {
-    //     const ac = new AbortController()
-    //     if (subId !== '') {
-    //         eventBus.on('updateSubMenus', ac, () => {
-    //             getSubMenu()
-    //         })
-    //     }
-    //     return () => {
-    //         ac.abort()
-    //         eventBus.remove('updateSubMenus', getSubMenu)
-    //     }
-    // }, [getSubMenu, subMenuResponse, subId])
-
-    // useEffect(() => {
-    //     const ac = new AbortController()
-
-    //     eventBus.on('updateItems', ac, () => {
-    //         getItems()
-    //     })
-    //     return () => {
-    //         ac.abort()
-    //         eventBus.remove('updateItems', getItems)
-    //     }
-    // }, [getItems, itemResponse])
 
     return <RoutesContainer />
 }
