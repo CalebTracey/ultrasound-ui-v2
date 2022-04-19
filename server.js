@@ -19,6 +19,7 @@ app.use(
 
 const server = app.listen(PORT, () => {
     const { port } = server.address()
+    // eslint-disable-next-line no-console
     console.log(`Server listening on port ${port}`)
 })
 
@@ -26,6 +27,5 @@ app.use(express.static(path.join(__dirname, 'build')))
 
 // This route serves the React app
 app.get('/*', (req, res) => {
-    console.log(__dirname)
     res.sendFile(path.resolve(__dirname, 'build', 'index.html'))
 })
