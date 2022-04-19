@@ -1,0 +1,91 @@
+workflow:
+    rules:
+        - if: $CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS && $CI_PIPELINE_SOURCE == "push"
+          when: never
+        - if: '$CI_PIPELINE_SOURCE =~ /merge_request_even|web/'
+        - if: '$CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS'
+          when: never
+        - if: '$CI_COMMIT_BRANCH'
+
+variables:
+    VERSION: v0.0.1
+    DOCKER_DRIVER: overlay
+    HEROKU_REGISTRY: registry.heroku.com
+    HEROKU_APP: ultrasound-ui
+    DOCKER_TLS_CERTDIR: ""
+
+stages:
+    - test
+    - push-image:prod
+    - deploy:prod
+
+test-build:
+    stage: test
+    image:
+        name: gcr.io/kaniko-project/executor:debug-edge
+        entrypoint: ['']
+    before_script:
+        - mkdir -p /kaniko/.docker
+        - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
+    script:
+        - /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile --no-push
+    rules:
+      - if: '$CI_COMMIT_REF_NAME =~ /main|^develop/i'
+        when: never
+      - if: '$CI_COMMIT_REF_NAME =~ /main|^develop|^FEAT.*$/i'
+      - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+
+push-image:prod:
+  stage: push-image:prod
+  extends:
+    - .common:prod
+  image:
+    name: gcr.io/kaniko-project/executor:debug-edge
+    entrypoint: [ "" ]
+  before_script:
+    - mkdir -p /kaniko/.docker
+    - echo "{\"auths\":{\"$HEROKU_REGISTRY\":{\"username\":\"_\",\"password\":\"$HEROKU_API_KEY\"}}}" > /kaniko/.docker/config.json
+  script:
+    - echo "$TAG"
+    - /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile --destination $HEROKU_REGISTRY/$HEROKU_APP/web    
+  rules:
+    - if: '$CI_COMMIT_REF_NAME =~ /main|^develop/i'
+
+release-image:prod:
+  stage: deploy:prod
+  extends:
+    - .deploy
+    - .common:prod
+  image: docker:20
+  services:
+    - docker:20-dind
+  script:
+    - echo "$HEROKU_API_KEY" | docker login --username=_ --password-stdin registry.heroku.com
+    - docker run --rm -e HEROKU_API_KEY=$HEROKU_API_KEY wingrunr21/alpine-heroku-cli container:release web --app $HEROKU_APP
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: never
+    - if: '$CI_COMMIT_REF_NAME =~ /main|^develop/i'
+      when: manual
+  dependencies:
+    - push-image:prod
+
+.deploy:
+  script:
+    - if: '$CI_COMMIT_REF_NAME =~ /main|^develop/i'
+      when: manual
+  dependencies:
+    - test-build
+
+.common:prod:
+  environment:
+    name: prod
+  variables:
+    ENVIRONMENT: "prod"
+  rules:
+    - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
+      when: never
+    - if: '$CI_COMMIT_REF_NAME =~ /main|^develop/i'
+      when: manual
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: never
