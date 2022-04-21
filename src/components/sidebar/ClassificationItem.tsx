@@ -1,4 +1,4 @@
-import { SubMenu, SidebarHeader } from 'react-pro-sidebar'
+import { SubMenu } from 'react-pro-sidebar'
 import React, { FC, useCallback, useRef, useEffect, useState } from 'react'
 import { FiEdit3 } from 'react-icons/fi'
 import { Link } from 'react-router-dom'

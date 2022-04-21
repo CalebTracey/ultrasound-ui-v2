@@ -1,7 +1,6 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 /* eslint-disable react/prop-types */
 import React, { FC, useEffect, useState, useCallback } from 'react'
-import Switch from 'react-switch'
 import { AxiosError, AxiosResponse } from 'axios'
 import Logout from '../buttons/LogoutButton'
 import UserInfoHeader from '../UserInfoHeader'
@@ -21,16 +20,12 @@ const Header: FC = () => {
     const [initModal, setInitModal] = useState(false)
     const [updateModal, setUpdateModal] = useState(false)
     const [dropDownOpen, setDropdownOpen] = useState(false)
-    // const [switchChecked, setSwitchChecked] = useState(false)
     const isAdmin = user.roles?.includes('ROLE_ADMIN')
     const dispatch = useAppDispatch()
+
     const isUser = (value: unknown): value is IAppUser => {
         return !!value && !!(value as IAppUser)
     }
-    // const handleSwitchChange = () => {
-    //     dispatch(showEditToggle())
-    //     setSwitchChecked(!switchChecked)
-    // }
     const dropDownToggle = () => setDropdownOpen(!dropDownOpen)
 
     const databaseInitToggle = useCallback(() => {
@@ -59,12 +54,6 @@ const Header: FC = () => {
         getDate()
     }, [])
 
-    // useEffect(() => {
-    //     if (switchChecked !== showEdit) {
-    //         setSwitchChecked(showEdit)
-    //     }
-    // }, [switchChecked, showEdit])
-
     return (
         <>
             <header style={{ zIndex: 10 }}>
@@ -88,25 +77,6 @@ const Header: FC = () => {
                     {user.email && isUser(userRegister) && (
                         <UserInfoHeader email={user.email} />
                     )}
-                    {/* {isAdmin && (
-                        <div
-                            style={{
-                                position: 'absolute',
-                                left: '1rem',
-                            }}
-                        >
-                            <label>
-                                <Switch
-                                    height={14}
-                                    width={28}
-                                    handleDiameter={12}
-                                    onChange={handleSwitchChange}
-                                    checked={switchChecked}
-                                />
-                            </label>
-                        </div>
-                    )} */}
-                    {/* <SearchBar /> */}
                 </div>
             </header>
             <WarningModal

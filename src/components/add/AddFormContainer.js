@@ -1,7 +1,6 @@
 /* eslint-disable react/prop-types */
 import React, { useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { useSelector } from 'react-redux'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as Yup from 'yup'
 import AddForm from './AddForm'
@@ -9,13 +8,11 @@ import AddForm from './AddForm'
 const AddFormContainer = () => {
     const [isLoading, setIsLoading] = useState(false)
     const [successful, setSuccessful] = useState(false)
-    // const { message } = useSelector((state) => state.message)
     const [details, setDetails] = useState(null)
     const [files, setFiles] = useState([])
     const [category, setCategory] = useState('')
     const [classification, setClassification] = useState('')
     const [payload, setPayload] = useState(null)
-    // const dispatch = useDispatch()
 
     const validationSchema = Yup.object().shape({
         classification: Yup.string().required('Classification is required'),
@@ -53,23 +50,11 @@ const AddFormContainer = () => {
                 setFiles(file)
             }
             setDetails(data)
-            console.log(data)
             setIsLoading(false)
             setSuccessful(true)
         }
     }
 
-    // useEffect(() => {
-    //     if (payload) {
-    //         dispatch(allActions.serverOut.upload(payload))
-    //             .then(() => {
-    //                 setSuccessful(true)
-    //             })
-    //             .catch(() => {
-    //                 setSuccessful(false)
-    //             })
-    //     }
-    // }, [payload, dispatch])
     return (
         <div className="form-wrapper">
             <div>{`Classification: ${classification}\n`}</div>
@@ -94,7 +79,6 @@ const AddFormContainer = () => {
                     <span>Upload</span>
                 </button>
             </div>
-            {/* <Upload setIsLoading={setIsLoading} setFiles={setFiles} /> */}
         </div>
     )
 }

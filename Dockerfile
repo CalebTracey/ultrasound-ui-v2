@@ -1,21 +1,39 @@
-FROM node:16.14.2-buster AS builder
+FROM golang:1.18.1-alpine3.15 as builder
+ADD . /app
+WORKDIR /app/go-server
+RUN apk add git
+RUN apk add build-base
+RUN go mod download
+RUN go build -o /main .
 
+FROM node:16.14-buster AS node_builder
 WORKDIR /code
-
-COPY package.json package.json
-COPY yarn.lock yarn.lock
-
-RUN yarn install --frozen-lockfile
-
+COPY --from=builder /app .
+RUN rm -rf /go-server/
+RUN yarn install --frozen--lockfile
 COPY . .
-
 RUN yarn build
 
-#NGINX web server
-FROM nginx:1.20-alpine AS prod
-
-COPY --from=builder /code/build /usr/share/nginx/html
-
+FROM alpine:3.15
+RUN apk --no-cache add ca-certificates
+COPY --from=builder /main .
+COPY --from=node_builder /code/build ./web
+RUN chmod +x ./main
 EXPOSE 80
+CMD ./main
 
-CMD ["nginx", "-g", "daemon off;"]
+#NGINX web server
+#FROM nginx:1.20-alpine AS prod
+#COPY --from=builder /code/build /usr/share/nginx/html
+#EXPOSE 80
+#CMD ["nginx", "-g", "daemon off;"]
+
+
+
+# Stage 2
+#FROM alpine
+#RUN adduser -S -D -H -h /app appuser
+#USER appuser
+#COPY --from=builder /code/build /app/
+#WORKDIR /app
+#CMD ["./server.go"]

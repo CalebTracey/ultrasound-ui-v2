@@ -8,6 +8,8 @@ import './style-fonts/Open_Sans/static/OpenSans/OpenSans-Italic.ttf'
 import './style-fonts/Roboto_Slab/static/RobotoSlab-SemiBold.ttf'
 import React from 'react'
 import ReactDOM from 'react-dom'
+// import { ErrorBoundary } from 'react-error-boundary'
+
 import { Provider } from 'react-redux'
 import { BrowserRouter } from 'react-router-dom'
 import registerServiceWorker from './registerServiceWorker'
@@ -15,12 +17,19 @@ import store from './redux/store'
 import './index.css'
 import App from './App'
 
+// const errorHandler = (error: Error, info: { componentStack: string }) => {
+//     console.log(error.message)
+//     console.log(info.componentStack)
+// }
+
 ReactDOM.render(
-    <BrowserRouter basename={process.env.PUBLIC_URL}>
-        <Provider store={store}>
+    <Provider store={store}>
+        <BrowserRouter basename={process.env.PUBLIC_URL}>
+            {/* <ErrorBoundary fallback={<>Error!</>} onError={errorHandler}> */}
             <App />
-        </Provider>
-    </BrowserRouter>,
+            {/* </ErrorBoundary> */}
+        </BrowserRouter>
+    </Provider>,
     document.querySelector('#root')
 )
 

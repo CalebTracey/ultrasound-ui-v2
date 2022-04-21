@@ -19,6 +19,12 @@
         "noEmit": true,
         "jsx": "react-jsx"
     },
+    "filesGlob": [
+        "typings/index.d.ts",
+        "src/**/*.ts",
+        "src/**/*.tsx",
+        "node_modules/typescript/lib/lib.es6.d.ts"
+    ],
     "globals": {
         "React": true,
         "google": true,
@@ -31,6 +37,8 @@
         "jsdom": true,
         "JSX": true
     },
-    "include": ["src"],
-    "exclude": ["node_modules", "wwwroot"]
+    "types": ["node", "webpack", "react", "react-dom", "reactstrap"],
+    "include": ["**/*.ts"],
+    "exclude": ["target", "dist", "node_modules", "__tests__"],
+    "compileOnSave": true
 }
