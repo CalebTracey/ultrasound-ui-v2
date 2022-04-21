@@ -12,8 +12,6 @@ import (
 	"ultrasound-client/go-server/proxy"
 )
 
-const infoLevel = logrus.InfoLevel
-
 type Handler struct {
 	Service proxy.ProxyFacade
 	App     spaHandler

@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"github.com/NYTimes/gziphandler"
 	"github.com/rs/cors"
 	"github.com/sirupsen/logrus"
@@ -14,32 +15,28 @@ import (
 	"ultrasound-client/go-server/proxy"
 )
 
-//
-//type Handler struct {
-//	staticPath string
-//	indexPath  string
-//}
-
-const Port = "0.0.0.0:6088"
-const StaticPath = "build"
-const IndexPath = "index.html"
+const DefaultPort = ":6088"
 
 func main() {
 	defer deathScream()
 
+	port := os.Getenv("PORT")
+
+	if port == "" {
+		logrus.Fatal("$PORT must be set")
+	}
 	handler := Handler{
 		Service: proxy.NewService(),
 	}
-
 	router := handler.initializeRoutes()
-	logrus.Fatal(ListenAndServe(Port, gziphandler.GzipHandler(cors.Default().Handler(router))))
+	logrus.Fatal(listenAndServe(port, gziphandler.GzipHandler(cors.Default().Handler(router))))
 }
 
-func ListenAndServe(addr string, handler http.Handler) error {
+func listenAndServe(addr string, handler http.Handler) error {
 	logrus.Infof("=== HTTP Server address %v ===", addr)
 
 	srv := &http.Server{
-		Addr:         addr,
+		Addr:         fmt.Sprintf(":%v", addr),
 		Handler:      handler,
 		WriteTimeout: 15 * time.Second,
 		ReadTimeout:  15 * time.Second,

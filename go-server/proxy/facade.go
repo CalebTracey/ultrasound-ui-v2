@@ -6,8 +6,10 @@ import (
 	"net/url"
 )
 
-const clientURL = "http://localhost:6088"
-const serverURL = "http://localhost:6080"
+//const clientURL = "http://localhost:6088"
+const clientURLProd = "https://ultrasound-ui.herokuapp.com"
+
+//const serverURL = "http://localhost:6080"
 
 type ProxyFacade interface {
 	//Client() *httputil.ReverseProxy
@@ -20,21 +22,8 @@ func NewService() Service {
 
 type Service struct{}
 
-//func (s Service) Client() *httputil.ReverseProxy {
-//	remote, err := url.Parse(clientURL)
-//	if err != nil {
-//		panic(err)
-//	}
-//	proxy, proxyErr := newProxy(clientURL)
-//	if proxyErr != nil {
-//		panic(proxyErr)
-//	}
-//
-//	return proxy
-//}
-
 func (s Service) Server() *httputil.ReverseProxy {
-	origin, _ := url.Parse(clientURL)
+	origin, _ := url.Parse(clientURLProd)
 
 	director := func(req *http.Request) {
 		req.Header.Add("X-Forwarded-Host", req.Host)
@@ -44,19 +33,5 @@ func (s Service) Server() *httputil.ReverseProxy {
 	}
 	proxy := &httputil.ReverseProxy{Director: director}
 
-	//if proxyErr != nil {
-	//	panic(proxyErr)
-	//}
 	return proxy
 }
-
-//
-//func newProxy(targetHost string) (*httputil.ReverseProxy, error) {
-//	hostUrl, err := url.Parse(targetHost)
-//	logrus.Infoln("URL: " + hostUrl.RawPath)
-//	if err != nil {
-//		return nil, err
-//	}
-//
-//	return httputil.NewSingleHostReverseProxy(hostUrl), nil
-//}
