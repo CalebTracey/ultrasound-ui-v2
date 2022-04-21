@@ -1,0 +1,12 @@
+{
+    "Env": "Local",
+    "Port": "6088",
+    "ClientConfig": {
+        "Name": "CLIENT",
+        "Url": "localhost:6088"
+    },
+    "ServerConfig": {
+        "Name": "SERVER",
+        "Url": "http://localhost:6080"
+    }
+}

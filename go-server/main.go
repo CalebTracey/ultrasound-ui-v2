@@ -12,23 +12,36 @@ import (
 	"sync"
 	"syscall"
 	"time"
+	"ultrasound-client/go-server/config"
 	"ultrasound-client/go-server/proxy"
+	"ultrasound-client/go-server/routes"
 )
 
-const DefaultPort = ":6088"
+const DefaultPort = "6088"
+
+var (
+	configPath = "local_config.json"
+)
 
 func main() {
 	defer deathScream()
 
+	appConfig := config.NewConfigFromFile(configPath)
+	proxyService := proxy.NewService(appConfig)
 	port := os.Getenv("PORT")
 
 	if port == "" {
-		logrus.Fatal("$PORT must be set")
+		port = DefaultPort
+		logrus.Infof("PORT is: %v", port)
 	}
-	handler := Handler{
-		Service: proxy.NewService(),
+
+	handler := routes.Handler{
+		Service:    &proxyService,
+		StaticPath: proxyService.StaticPath,
+		IndexPath:  proxyService.IndexPath,
 	}
-	router := handler.initializeRoutes()
+
+	router := handler.InitializeRoutes()
 	logrus.Fatal(listenAndServe(port, gziphandler.GzipHandler(cors.Default().Handler(router))))
 }
 
@@ -76,9 +89,7 @@ func listenAndServe(addr string, handler http.Handler) error {
 		}
 		signals <- nil
 	}()
-
 	wgServer.Wait()
-
 	return serverError
 }
 

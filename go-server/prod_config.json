@@ -1,0 +1,12 @@
+{
+    "Env": "Prod",
+    "Port": "",
+    "ClientConfig": {
+        "Name": "CLIENT",
+        "Url": "https://ultrasound-ui.herokuapp.com"
+    },
+    "ServerConfig": {
+        "Name": "SERVER",
+        "Url": "https://ultrasound-api.herokuapp.com"
+    }
+}

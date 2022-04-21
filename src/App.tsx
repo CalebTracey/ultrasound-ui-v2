@@ -1,6 +1,5 @@
 /* eslint-disable no-underscore-dangle */
-import React, { FC, useEffect, useCallback, useState } from 'react'
-
+import React, { FC, useEffect, useCallback } from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
 import { useAppSelector, useAppDispatch } from './redux/hooks'
 import eventBus from './common/EventBus'
@@ -14,10 +13,7 @@ const App: FC = () => {
     const { isAuth, loading, user, contentPath } = useAppSelector(
         (state) => state.auth
     )
-    const [subId, setSubId] = useState('')
-    const subMenuSelectedId = useAppSelector(
-        (state) => state.subMenu.selected._id
-    )
+
     const dispatch = useAppDispatch()
     const history = useHistory()
     const location = useLocation()
@@ -28,15 +24,6 @@ const App: FC = () => {
     const isContentPath = (value: unknown): value is string => {
         return !!value && !!(value as string)
     }
-    const isString = (value: unknown): value is string => {
-        return !!value && !!(value as string)
-    }
-
-    useEffect(() => {
-        if (isString(subMenuSelectedId)) {
-            setSubId(subMenuSelectedId)
-        }
-    }, [subMenuSelectedId])
 
     useEffect(() => {
         dispatch(clearMessage())
