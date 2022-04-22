@@ -22,18 +22,7 @@ const getLocalAccessToken = (): string | undefined => {
         return user.accessToken
     }
     return undefined
-    // const user = JSON.parse(localStorage.getItem('user'))
-    // console.log(`Get Token ${JSON.stringify(user.accessToken)}`)
-    // return user?.accessToken
 }
-
-// const updateLocalAccessToken = (token: string) => {
-//     const user = JSON.parse(localStorage.getItem('user'))
-//     user.accessToken = token
-//     localStorage.setItem('user', JSON.stringify(user))
-// }
-
-// const getUser = () => JSON.parse(localStorage.getItem('user'))
 
 const setUser = (user: TUserLoginResponse): void => {
     localStorage.setItem('user', JSON.stringify(user))
@@ -46,8 +35,6 @@ const removeUser = (): void => {
 const TokenService = {
     getLocalRefreshToken,
     getLocalAccessToken,
-    // updateLocalAccessToken,
-    // getUser,
     setUser,
     removeUser,
 }

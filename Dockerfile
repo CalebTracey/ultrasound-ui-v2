@@ -1,19 +1,39 @@
-FROM node:16-alpine AS builder
+FROM golang:1.18.1-alpine3.15 as builder
+ADD . /app
+WORKDIR /app/go-server
+RUN apk add git
+RUN apk add build-base
+RUN go mod download
+RUN go build -o /main .
 
-WORKDIR /opt/web
-COPY package.json yarn.lock ./
-RUN yarn install
-
-ENV PATH="./node_modules/.bin:$PATH"
-
-COPY . ./
+FROM node:16.14-buster AS node_builder
+WORKDIR /code
+COPY --from=builder /app .
+RUN rm -rf /go-server/
+RUN yarn install --frozen--lockfile
+COPY . .
 RUN yarn build
 
-FROM nginx:1.17-alpine
-RUN apk --no-cache add curl
-RUN curl -L https://github.com/a8m/envsubst/releases/download/v1.1.0/envsubst-`uname -s`-`uname -m` -o envsubst && \
-    chmod +x envsubst && \
-    mv envsubst /usr/local/bin
-COPY ./nginx.config /etc/nginx/nginx.template
-CMD ["/bin/sh", "-c", "envsubst < /etc/nginx/nginx.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"]
-COPY --from=builder /opt/web/build /usr/share/nginx/html
+FROM alpine:3.15
+RUN apk --no-cache add ca-certificates
+COPY --from=builder /main .
+COPY --from=node_builder /code/build ./web
+RUN chmod +x ./main
+EXPOSE 80
+CMD ./main
+
+#NGINX web server
+#FROM nginx:1.20-alpine AS prod
+#COPY --from=builder /code/build /usr/share/nginx/html
+#EXPOSE 80
+#CMD ["nginx", "-g", "daemon off;"]
+
+
+
+# Stage 2
+#FROM alpine
+#RUN adduser -S -D -H -h /app appuser
+#USER appuser
+#COPY --from=builder /code/build /app/
+#WORKDIR /app
+#CMD ["./server.go"]

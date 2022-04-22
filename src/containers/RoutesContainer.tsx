@@ -37,7 +37,6 @@ const RoutesContainer: FC = () => {
     }, [messageToggle, errorToggle, dispatch, messageState, errorState])
 
     useEffect(() => {
-        // const ac = new AbortController()
         if (text && !error && !notification) {
             setNotification(true)
             messageToggle()
@@ -46,7 +45,6 @@ const RoutesContainer: FC = () => {
             setNotification(true)
             errorToggle()
         }
-        // return () => ac.abort()
     }, [text, error, notification, errorToggle, messageToggle])
     return (
         <>

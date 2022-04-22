@@ -123,7 +123,10 @@ export const classificationSlice = createSlice({
                 state.subMenuCount = Array.from(
                     Object.keys(classification.subMenus)
                 ).length
-                state.listItemsCount = classification.listItems.length
+                state.listItemsCount =
+                    classification.listItems === undefined
+                        ? 0
+                        : classification.listItems.length
                 state.loading = 'successful'
             }
         )
