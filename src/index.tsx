@@ -17,17 +17,10 @@ import store from './redux/store'
 import './index.css'
 import App from './App'
 
-// const errorHandler = (error: Error, info: { componentStack: string }) => {
-//     console.log(error.message)
-//     console.log(info.componentStack)
-// }
-
 ReactDOM.render(
     <Provider store={store}>
         <BrowserRouter basename={process.env.PUBLIC_URL}>
-            {/* <ErrorBoundary fallback={<>Error!</>} onError={errorHandler}> */}
             <App />
-            {/* </ErrorBoundary> */}
         </BrowserRouter>
     </Provider>,
     document.querySelector('#root')

@@ -49,10 +49,9 @@ class Http {
     initHttp() {
         // might get the address from the docker container
         const url =
-            `${process.env.PUBLIC_URL}/api/` === null
-                ? `${process.env.PUBLIC_URL}/api/`
+            `${process.env.PUBLIC_URL}` === '/web'
+                ? `https://ultrasound-api.herokuapp.com/api/`
                 : 'http://localhost:6080/api/'
-        console.log(`URL is ${url}`)
 
         const http = axios.create({
             baseURL: url,

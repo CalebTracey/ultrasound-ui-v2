@@ -20,7 +20,7 @@ func (h Handler) initializeRoutes() *mux.Router {
 	r.Handle("/", h.ClientHandler())
 	r.PathPrefix("/web/").Handler(http.StripPrefix("/web/", h.ClientHandler()))
 	// Proxy route
-	r.Handle("/api/", h.ServiceHandler())
+	r.PathPrefix("/api/").Handler(h.ServiceHandler())
 	// Health check
 	r.HandleFunc("/api/health", func(w http.ResponseWriter, r *http.Request) {
 		err := json.NewEncoder(w).Encode(map[string]bool{"ok": true})
