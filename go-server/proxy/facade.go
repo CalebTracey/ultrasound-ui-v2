@@ -1,47 +1,33 @@
 package proxy
 
 import (
-	"context"
-	"github.com/sirupsen/logrus"
-	"os"
-	"path/filepath"
-	"ultrasound-client/go-server/config"
-	"ultrasound-client/go-server/service/client"
-	"ultrasound-client/go-server/service/server"
+	"net/http"
+	"net/http/httputil"
+	"net/url"
 )
 
-const StaticPath = "./web"
-const IndexPath = "index.html"
+const clientURLProd = "https://ultrasound-ui.herokuapp.com"
 
-type FacadeI interface {
-	Client(ctx context.Context, path string) (string, error)
+type Facade interface {
+	Server() *httputil.ReverseProxy
 }
 
-type Service struct {
-	ClientSvc  *client.Service
-	ServerSvc  *server.Service
-	StaticPath string
-	IndexPath  string
+func NewService() Service {
+	return Service{}
 }
 
-func NewService(appConfig *config.Config) Service {
-	return Service{
-		ClientSvc:  client.InitializeClientService(appConfig),
-		ServerSvc:  server.InitializeServerService(appConfig),
-		StaticPath: StaticPath,
-		IndexPath:  IndexPath,
+type Service struct{}
+
+func (s Service) Server() *httputil.ReverseProxy {
+	origin, _ := url.Parse(clientURLProd)
+
+	director := func(req *http.Request) {
+		req.Header.Add("X-Forwarded-Host", req.Host)
+		req.Header.Add("X-Origin-Host", origin.Host)
+		req.URL.Scheme = "http"
+		req.URL.Host = origin.Host
 	}
-}
+	proxy := &httputil.ReverseProxy{Director: director}
 
-func (s Service) Client(ctx context.Context, path string) (string, error) {
-	path = filepath.Join(s.StaticPath, path)
-	_, err := os.Stat(path)
-	if os.IsNotExist(err) {
-		staticIndexPath := filepath.Join(s.StaticPath, s.IndexPath)
-		return staticIndexPath, nil
-	} else if err != nil {
-		logrus.Errorln(err.Error())
-		return "", err
-	}
-	return "", nil
+	return proxy
 }
