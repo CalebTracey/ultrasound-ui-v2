@@ -11,14 +11,7 @@ import (
 	"net/http/httputil"
 	"os"
 	"path/filepath"
-	"ultrasound-client/go-server/proxy"
 )
-
-type Handler struct {
-	Service    proxy.Facade
-	staticPath string
-	indexPath  string
-}
 
 func (h Handler) initializeRoutes() *mux.Router {
 	r := mux.NewRouter().StrictSlash(true)
@@ -40,30 +33,30 @@ func (h Handler) initializeRoutes() *mux.Router {
 
 func (h Handler) ClientHandler() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		logrus.Infoln("SERVE HTTP")
 		path, err := filepath.Abs(r.URL.Path)
-		logrus.Infof("Absolute Path:: %v", path)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
+		// prepend the path with the path to the static directory
 		path = filepath.Join(StaticPath, path)
-
+		// check whether a file exists at the given path
 		_, err = os.Stat(path)
 		if os.IsNotExist(err) {
+			// file does not exist, serve index.html
 			http.ServeFile(w, r, filepath.Join(StaticPath, IndexPath))
 			return
 		} else if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
+		// default to using http.FileServer to serve the static dir
 		http.FileServer(http.Dir(StaticPath)).ServeHTTP(w, r)
 	}
 }
 
 func (h Handler) ServiceHandler() http.HandlerFunc {
 	serverProxy := proxyRequestHandler(h.Service.Server())
-	logrus.Infoln("Service Handler")
 	return serverProxy
 }
 
@@ -93,4 +86,8 @@ func (h Handler) loggingMiddleware(next http.Handler) http.Handler {
 			logrus.Errorf("Failed to send out response: %v", ioErr)
 		}
 	})
+}
+
+func (mrw *MyResponseWriter) Write(p []byte) (int, error) {
+	return mrw.buf.Write(p)
 }
