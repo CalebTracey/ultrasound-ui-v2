@@ -1,8 +1,6 @@
 import React, { FC, lazy, Suspense } from 'react'
-import { Route } from 'react-router-dom'
+import { Route, Switch } from 'react-router-dom'
 import SyncLoader from 'react-spinners/SyncLoader'
-// import { IAppUser } from '../schemas'
-// import Dashboard from '../containers/Dashboard'
 import { useAppSelector } from '../redux/hooks'
 
 const Dashboard = lazy(() => import('../containers/Dashboard'))
@@ -10,13 +8,15 @@ const Home = lazy(() => import('../containers/Home'))
 const Login = lazy(() => import('../containers/Login'))
 const ProtectedRoute = lazy(() => import('./ProtectedRoute'))
 const Register = lazy(() => import('../containers/Register'))
+
+// import Dashboard from '../containers/Dashboard'
+// import Home from '../containers/Home'
+// import Login from '../containers/Login'
+// import ProtectedRoute from './ProtectedRoute'
+// import Register from '../containers/Register'
+
 const Routes: FC = () => {
     const { isAuth } = useAppSelector((state) => state.auth)
-
-    // const isUser = (value: unknown): value is IAppUser => {
-    //     return !!value && !!(value as IAppUser)
-    // }
-    // const isAdmin = isUser(user) && user.roles?.includes('ROLE_ADMIN')
 
     return (
         <Suspense
@@ -26,24 +26,17 @@ const Routes: FC = () => {
                 </div>
             }
         >
-            <Route exact path={['/', '/home']} component={Home} />
-            <Route exact path="/login" component={Login} />
-            <Route exact path="/register" component={Register} />
-            {/* <Switch> */}
-            <ProtectedRoute
-                isAuthenticated={isAuth}
-                path="/dashboard"
-                authenticationPath="/login"
-                component={Dashboard}
-            />
-            {/* <ProtectedRoute
-                    isAuthenticated={isAdmin}
-                    path="/admin/dashboard"
+            <Switch>
+                <Route exact path={['/', '/home']} component={Home} />
+                <Route exact path="/login" component={Login} />
+                <Route exact path="/register" component={Register} />
+                <ProtectedRoute
+                    isAuthenticated={isAuth}
+                    path="/dashboard"
                     authenticationPath="/login"
                     component={Dashboard}
                 />
-                )
-            </Switch> */}
+            </Switch>
         </Suspense>
     )
 }
