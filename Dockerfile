@@ -22,19 +22,3 @@ COPY --from=node_builder /code/build ./web
 RUN chmod +x ./main
 EXPOSE 80
 CMD ./main
-
-#NGINX web server
-#FROM nginx:1.20-alpine AS prod
-#COPY --from=builder /code/build /usr/share/nginx/html
-#EXPOSE 80
-#CMD ["nginx", "-g", "daemon off;"]
-
-
-
-# Stage 2
-#FROM alpine
-#RUN adduser -S -D -H -h /app appuser
-#USER appuser
-#COPY --from=builder /code/build /app/
-#WORKDIR /app
-#CMD ["./server.go"]
