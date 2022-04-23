@@ -3,12 +3,12 @@
   "Port": "6088",
   "ClientConfig": {
     "Name": "CLIENT",
-    "Url": "localhost:6088",
+    "Url": "http://localhost:6088",
     "StaticPath": "index.html",
     "IndexPath": "/web"
   },
   "ServerConfig": {
     "Name": "SERVER",
-    "Url": "localhost:6080"
+    "Url": "http://localhost:6080"
   }
 }

@@ -13,7 +13,7 @@ import (
 
 const DefaultPort = "6088"
 
-var configPath = "config.json"
+var configPath = "local_config.json"
 
 func main() {
 	defer deathScream()

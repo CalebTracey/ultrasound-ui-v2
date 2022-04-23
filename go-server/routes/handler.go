@@ -50,7 +50,6 @@ func (h Handler) ClientHandler() http.HandlerFunc {
 		}
 		// prepend the path with the path to the static directory
 		res := h.Service.Client(path)
-
 		// check whether a file exists at the given path
 		_, err = os.Stat(path)
 		if os.IsNotExist(err) {

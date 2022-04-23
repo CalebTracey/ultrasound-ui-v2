@@ -17,7 +17,7 @@ RUN yarn build
 FROM alpine:3.15
 RUN apk --no-cache add ca-certificates
 COPY --from=builder /main .
-COPY --from=builder /app/go-server/cmd/svr/config.json .
+COPY --from=builder /app/go-server/cmd/svr/*config.json .
 COPY --from=node_builder /code/build ./web
 RUN chmod +x ./main
 EXPOSE 80
