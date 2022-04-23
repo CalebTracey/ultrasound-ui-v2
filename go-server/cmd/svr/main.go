@@ -4,18 +4,16 @@ import (
 	"github.com/NYTimes/gziphandler"
 	"github.com/rs/cors"
 	"github.com/sirupsen/logrus"
+	"gitlab.com/ultra207/ult-config/config"
 	"os"
-	"ultrasound-client/go-server/config"
 	"ultrasound-client/go-server/facade"
 	"ultrasound-client/go-server/routes"
 	"ultrasound-client/go-server/service"
 )
 
 const DefaultPort = "6088"
-const StaticPath = "/web"
-const IndexPath = "index.html"
-const ServerUrlProd = "https://ultrasound-api.herokuapp.com"
-const ClientUrlProd = "https://ultrasound-ui.herokuapp.com"
+
+var configPath = "config.json"
 
 func main() {
 	defer deathScream()
@@ -26,18 +24,13 @@ func main() {
 	}
 	logrus.Infof("Port is: %v", port)
 
-	appConfig := &config.Config{
-		ClientUrl: ClientUrlProd,
-		ServerUrl: ServerUrlProd,
-	}
+	appConfig := config.NewConfigFromFile(configPath)
 
 	handler := routes.Handler{
-		Service:    facade.NewService(appConfig),
-		StaticPath: StaticPath,
-		IndexPath:  IndexPath,
+		Service: facade.NewService(appConfig),
 	}
-	router := handler.InitializeRoutes()
 
+	router := handler.InitializeRoutes()
 	logrus.Fatal(service.ListenAndServe(port, gziphandler.GzipHandler(cors.Default().Handler(router))))
 }
 

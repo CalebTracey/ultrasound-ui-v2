@@ -15,9 +15,7 @@ import (
 )
 
 type Handler struct {
-	Service    facade.Facade
-	StaticPath string
-	IndexPath  string
+	Service facade.Facade
 }
 
 type MyResponseWriter struct {
@@ -51,19 +49,20 @@ func (h Handler) ClientHandler() http.HandlerFunc {
 			return
 		}
 		// prepend the path with the path to the static directory
-		path = filepath.Join(h.StaticPath, path)
+		res := h.Service.Client(path)
+
 		// check whether a file exists at the given path
 		_, err = os.Stat(path)
 		if os.IsNotExist(err) {
 			// file does not exist, serve index.html
-			http.ServeFile(w, r, filepath.Join(h.StaticPath, h.IndexPath))
+			http.ServeFile(w, r, res.FilePath)
 			return
 		} else if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 		// default to using service.FileServer to serve the static dir
-		http.FileServer(http.Dir(h.StaticPath)).ServeHTTP(w, r)
+		http.FileServer(http.Dir(res.IndexPath)).ServeHTTP(w, r)
 	}
 }
 

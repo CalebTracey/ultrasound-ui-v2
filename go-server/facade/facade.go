@@ -1,25 +1,38 @@
 package facade
 
 import (
+	"gitlab.com/ultra207/ult-config/config"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
-	"ultrasound-client/go-server/config"
+	"path/filepath"
 )
 
 type Facade interface {
+	Client(path string) *ClientResponse
 	Server() *httputil.ReverseProxy
 }
 
 type Service struct {
-	clientUrl string
-	serverUrl string
+	staticPath string
+	indexPath  string
+	clientUrl  string
+	serverUrl  string
 }
 
 func NewService(appConfig *config.Config) Service {
 	return Service{
-		clientUrl: appConfig.ClientUrl,
-		serverUrl: appConfig.ServerUrl,
+		staticPath: appConfig.ClientConfig.StaticPath,
+		indexPath:  appConfig.ClientConfig.IndexPath,
+		clientUrl:  appConfig.ClientConfig.Url,
+		serverUrl:  appConfig.ServerConfig.Url,
+	}
+}
+
+func (s Service) Client(path string) *ClientResponse {
+	return &ClientResponse{
+		FilePath:  filepath.Join(s.staticPath, path),
+		IndexPath: filepath.Join(s.staticPath, s.indexPath),
 	}
 }
 
