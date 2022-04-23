@@ -47,7 +47,7 @@ class Http {
     }
 
     initHttp() {
-        // go server sets the environment based on config file found in go-server/cmd/svr
+        // this is set to "Prod" in Heroku config vars
         console.log(`Client Environment: ${process.env.ENVIRONMENT}`)
         const url =
             `${process.env.ENVIRONMENT}` === 'Prod'
