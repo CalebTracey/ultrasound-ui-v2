@@ -26,7 +26,7 @@ test-build:
         entrypoint: ['']
     before_script:
         - mkdir -p /kaniko/.docker
-        - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
+        - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$GO_MODULES_USER\",\"password\":\"$GO_MODULES_PERSONAL_ACCESS_TOKEN\"}}}" > /kaniko/.docker/config.json
     script:
         - /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile --no-push
     rules:

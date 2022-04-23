@@ -1,6 +1,6 @@
-module ultrasound-client/go-server
+module gitlab.com/ultra207/ultrasound-client/go-server
 
-go 1.17
+go 1.18
 
 require (
 	github.com/NYTimes/gziphandler v1.1.1
@@ -9,4 +9,4 @@ require (
 	github.com/sirupsen/logrus v1.8.1
 )
 
-require golang.org/x/sys v0.0.0-20220412211240-33da011f77ad // indirect
+require golang.org/x/sys v0.0.0-20220422013727-9388b58f7150 // indirect
