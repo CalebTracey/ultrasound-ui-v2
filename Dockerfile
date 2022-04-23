@@ -1,9 +1,5 @@
 FROM golang:1.18.1-alpine3.15 as builder
-ARG GO_MODULES_USER
-ARG GO_MODULES_PERSONAL_ACCESS_TOKEN
 ADD . /app
-RUN go env -w GOPRIVATE="gitlab.com" && \
-    echo -e "machine gitlab.com\nlogin ${GO_MODULES_USER}\npassword ${GO_MODULES_PERSONAL_ACCESS_TOKEN}" > ~/.netrc
 WORKDIR /app/go-server/cmd/svr
 RUN apk add git
 RUN apk add build-base

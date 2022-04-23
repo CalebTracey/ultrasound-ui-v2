@@ -1,7 +1,7 @@
 package facade
 
 import (
-	"gitlab.com/ultra207/ult-config/config"
+	"gitlab.com/ultra207/ultrasound-client/go-server/config"
 	"net/http"
 	"net/http/httputil"
 	"net/url"

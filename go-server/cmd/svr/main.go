@@ -4,7 +4,7 @@ import (
 	"github.com/NYTimes/gziphandler"
 	"github.com/rs/cors"
 	"github.com/sirupsen/logrus"
-	"gitlab.com/ultra207/ult-config/config"
+	"gitlab.com/ultra207/ultrasound-client/go-server/config"
 	"gitlab.com/ultra207/ultrasound-client/go-server/facade"
 	"gitlab.com/ultra207/ultrasound-client/go-server/routes"
 	"gitlab.com/ultra207/ultrasound-client/go-server/service"
