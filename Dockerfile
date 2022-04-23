@@ -1,6 +1,6 @@
 FROM golang:1.18.1-alpine3.15 as builder
 ADD . /app
-WORKDIR /app/go-server
+WORKDIR /app/go-server/cmd/svr
 RUN apk add git
 RUN apk add build-base
 RUN go mod download
