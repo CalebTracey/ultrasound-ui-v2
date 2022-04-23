@@ -9,7 +9,7 @@ import (
 )
 
 type Facade interface {
-	Client(path string) *ClientResponse
+	Client(path string) ClientResponse
 	Server() *httputil.ReverseProxy
 }
 
@@ -29,8 +29,8 @@ func NewService(appConfig *config.Config) Service {
 	}
 }
 
-func (s Service) Client(path string) *ClientResponse {
-	return &ClientResponse{
+func (s Service) Client(path string) ClientResponse {
+	return ClientResponse{
 		FilePath:  filepath.Join(s.staticPath, path),
 		IndexPath: filepath.Join(s.staticPath, s.indexPath),
 	}
