@@ -18,14 +18,14 @@ func main() {
 
 	appConfig := config.NewConfigFromFile(configPath)
 
-	logrus.Infof("Current environment: %v", os.Getenv("ENVIRONMENT"))
-
 	handler := routes.Handler{
 		Service: facade.NewService(appConfig),
 	}
-	router := handler.InitializeRoutes()
-	env := handler.Service.Environment()
 
+	env := handler.Service.Environment()
+	router := handler.InitializeRoutes()
+
+	logrus.Infof("Current environment: %v", os.Getenv("ENVIRONMENT"))
 	logrus.Fatal(service.ListenAndServe(env.Port, gziphandler.GzipHandler(cors.Default().Handler(router))))
 }
 

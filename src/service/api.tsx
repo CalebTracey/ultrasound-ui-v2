@@ -48,6 +48,7 @@ class Http {
 
     initHttp() {
         // go server sets the environment based on config file found in go-server/cmd/svr
+        console.log(`Client Environment: ${process.env.ENVIRONMENT}`)
         const url =
             `${process.env.ENVIRONMENT}` === 'Prod'
                 ? `https://ultrasound-api.herokuapp.com/api/`

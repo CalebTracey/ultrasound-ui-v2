@@ -57,6 +57,7 @@ func (s *Service) setPort() (string, error) {
 	return port, nil
 }
 
+// this is useless right now. Wanted to set the env vars for react from here but not working currently
 // setEnvironment set ENVIRONMENT env variable for react to set api url in src/service/api.tsx
 func (s *Service) setEnvironment() (string, error) {
 	envErr := os.Setenv("ENVIRONMENT", s.environment)
@@ -64,6 +65,5 @@ func (s *Service) setEnvironment() (string, error) {
 		logrus.Errorf("failed to set ENVIRONMENT; err: %v", envErr.Error())
 		return "", envErr
 	}
-
 	return s.environment, nil
 }
