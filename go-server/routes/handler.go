@@ -5,13 +5,13 @@ import (
 	"encoding/json"
 	"github.com/gorilla/mux"
 	"github.com/sirupsen/logrus"
+	"gitlab.com/ultra207/ultrasound-client/go-server/facade"
 	"io"
 	"io/ioutil"
 	"net/http"
 	"net/http/httputil"
 	"os"
 	"path/filepath"
-	"ultrasound-client/go-server/facade"
 )
 
 type Handler struct {

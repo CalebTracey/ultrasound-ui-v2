@@ -5,10 +5,10 @@ import (
 	"github.com/rs/cors"
 	"github.com/sirupsen/logrus"
 	"gitlab.com/ultra207/ult-config/config"
+	"gitlab.com/ultra207/ultrasound-client/go-server/facade"
+	"gitlab.com/ultra207/ultrasound-client/go-server/routes"
+	"gitlab.com/ultra207/ultrasound-client/go-server/service"
 	"os"
-	"ultrasound-client/go-server/facade"
-	"ultrasound-client/go-server/routes"
-	"ultrasound-client/go-server/service"
 )
 
 const DefaultPort = "6088"
