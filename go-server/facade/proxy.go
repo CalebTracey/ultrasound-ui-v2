@@ -1,6 +1,7 @@
 package facade
 
 import (
+	"github.com/sirupsen/logrus"
 	"gitlab.com/ultra207/ultrasound-client/go-server/config"
 	"net/http"
 	"net/http/httputil"
@@ -8,8 +9,8 @@ import (
 	"path/filepath"
 )
 
-type Facade interface {
-	Client(path string) ClientResponse
+type ProxyFacade interface {
+	Client(urlPath string) (ClientResponse, error)
 	Server() *httputil.ReverseProxy
 }
 
@@ -29,11 +30,19 @@ func NewService(appConfig *config.Config) Service {
 	}
 }
 
-func (s Service) Client(path string) ClientResponse {
-	return ClientResponse{
-		FilePath:  filepath.Join(s.staticPath, path),
-		IndexPath: filepath.Join(s.staticPath, s.indexPath),
+func (s Service) Client(urlPath string) (ClientResponse, error) {
+	path, err := filepath.Abs(urlPath)
+	if err != nil {
+		logrus.Errorln(err.Error())
+		return ClientResponse{}, err
 	}
+	return ClientResponse{
+		// prepend the path with the path to the static directory
+		FilePath: filepath.Join(s.staticPath, path),
+		// path to index.html for when file does not exist
+		IndexPath:  filepath.Join(s.staticPath, s.indexPath),
+		StaticPath: s.staticPath,
+	}, nil
 }
 
 func (s Service) Server() *httputil.ReverseProxy {

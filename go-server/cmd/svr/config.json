@@ -4,8 +4,9 @@
   "ClientConfig": {
     "Name": "CLIENT",
     "Url": "https://ultrasound-ui.herokuapp.com",
-    "StaticPath": "index.html",
-    "IndexPath": "/web"
+    "IndexPath": "index.html",
+    "StaticPath": "/web"
+
   },
   "ServerConfig": {
     "Name": "SERVER",

@@ -13,7 +13,7 @@ import (
 )
 
 func ListenAndServe(addr string, handler http.Handler) error {
-	logrus.Infof("=== HTTP Server address %v ===", addr)
+	logrus.Infof("Listening on Port: %v", addr)
 
 	srv := &http.Server{
 		Addr:         fmt.Sprintf(":%v", addr),

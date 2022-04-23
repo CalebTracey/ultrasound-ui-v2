@@ -47,9 +47,9 @@ class Http {
     }
 
     initHttp() {
-        // might get the address from the docker container
+        // go server sets the environment based on config file found in go-server/cmd/svr
         const url =
-            `${process.env.PUBLIC_URL}` === '/web'
+            `${process.env.ENVIRONMENT}` === 'Prod'
                 ? `https://ultrasound-api.herokuapp.com/api/`
                 : 'http://localhost:6080/api/'
 

@@ -4,8 +4,8 @@
   "ClientConfig": {
     "Name": "CLIENT",
     "Url": "http://localhost:6088",
-    "StaticPath": "index.html",
-    "IndexPath": "/web"
+    "IndexPath": "index.html",
+    "StaticPath": "/web"
   },
   "ServerConfig": {
     "Name": "SERVER",

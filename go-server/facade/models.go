@@ -1,6 +1,7 @@
 package facade
 
 type ClientResponse struct {
-	FilePath  string
-	IndexPath string
+	FilePath   string
+	StaticPath string
+	IndexPath  string
 }

@@ -13,7 +13,7 @@ import (
 
 const DefaultPort = "6088"
 
-var configPath = "local_config.json"
+var configPath = "config.json"
 
 func main() {
 	defer deathScream()
@@ -22,15 +22,21 @@ func main() {
 	if port == "" {
 		port = DefaultPort
 	}
-	logrus.Infof("Port is: %v", port)
 
 	appConfig := config.NewConfigFromFile(configPath)
+	// set ENVIRONMENT env variable for react to set api url in src/service/api.tsx
+	envErr := os.Setenv("ENVIRONMENT", appConfig.Env)
+	if envErr != nil {
+		logrus.Errorf("failed to set ENVIRONMENT; err: %v", envErr.Error())
+	}
+
+	logrus.Infof("Current environment: %v", os.Getenv("ENVIRONMENT"))
 
 	handler := routes.Handler{
 		Service: facade.NewService(appConfig),
 	}
-
 	router := handler.InitializeRoutes()
+
 	logrus.Fatal(service.ListenAndServe(port, gziphandler.GzipHandler(cors.Default().Handler(router))))
 }
 
