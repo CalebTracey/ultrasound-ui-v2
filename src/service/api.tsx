@@ -49,10 +49,10 @@ class Http {
     initHttp() {
         // this is set to "Prod" in Heroku config vars
         console.log(`Client Environment: ${process.env.ENVIRONMENT}`)
-        const url =
-            `${process.env.ENVIRONMENT}` === 'Prod'
-                ? `https://ultrasound-api.herokuapp.com/api/`
-                : 'http://localhost:6080/api/'
+        const url = `https://ultrasound-api.herokuapp.com/api/`
+        //     `${process.env.ENVIRONMENT}` === 'Prod'
+        //         ? `https://ultrasound-api.herokuapp.com/api/`
+        //         : 'http://localhost:6080/api/'
 
         const http = axios.create({
             baseURL: url,
