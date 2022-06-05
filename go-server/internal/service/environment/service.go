@@ -1,15 +1,16 @@
 package environment
 
-//go:generate -source=service.go -destination=mockEnvService.go -package=environment
 import (
 	"github.com/sirupsen/logrus"
 	"gitlab.com/ultra207/ultrasound-client/go-server/config"
 	"os"
 )
 
+//go:generate mockgen -source=service.go -destination=mockEnvService.go -package=environment
 type ServiceI interface {
 	Set() (Response, error)
 }
+
 type Service struct {
 	environment string
 	port        string
@@ -20,11 +21,19 @@ type Response struct {
 	Port        string
 }
 
-func InitializeEnvService(appConfig *config.Config) Service {
+func InitializeEnvService(appConfig *config.Config) (Service, error) {
+	env := appConfig.Env
+	port := appConfig.Port
+	if env == "" {
+		return Service{}, config.MissingField("environment")
+	}
+	if port == "" {
+		return Service{}, config.MissingField("port")
+	}
 	return Service{
 		environment: appConfig.Env,
 		port:        appConfig.Port,
-	}
+	}, nil
 }
 
 func (s *Service) Set() (Response, error) {

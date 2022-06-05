@@ -48,7 +48,7 @@ class Http {
 
     initHttp() {
         // this is set to "Prod" in Heroku config vars
-        console.log(`Client Environment: ${process.env.ENVIRONMENT}`)
+        console.log(`Client Environment: ${process.env.REACT_APP_ENVIRONMENT}`)
         const url = `https://ultrasound-api.herokuapp.com/api/`
         //     `${process.env.ENVIRONMENT}` === 'Prod'
         //         ? `https://ultrasound-api.herokuapp.com/api/`

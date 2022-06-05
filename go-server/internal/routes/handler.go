@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"github.com/gorilla/mux"
 	"github.com/sirupsen/logrus"
-	"gitlab.com/ultra207/ultrasound-client/go-server/facade"
+	"gitlab.com/ultra207/ultrasound-client/go-server/internal/facade"
 	"net/http"
 	"os"
 )
@@ -30,6 +30,7 @@ func (h Handler) InitializeRoutes() *mux.Router {
 	r.HandleFunc("/api/health", func(w http.ResponseWriter, r *http.Request) {
 		err := json.NewEncoder(w).Encode(map[string]bool{"ok": true})
 		if err != nil {
+			logrus.Errorln(err.Error())
 			return
 		}
 	})
@@ -42,7 +43,7 @@ func (h Handler) ClientHandler() http.HandlerFunc {
 		// build paths with request and config file
 		res, svcErr := h.Service.Client(urlPath)
 		if svcErr != nil {
-			http.Error(w, svcErr.Error(), http.StatusBadRequest)
+			h.handleHttpError(w, svcErr, http.StatusBadRequest)
 		}
 		// check whether a file exists at the given path
 		_, err := os.Stat(res.FilePath)
@@ -51,8 +52,7 @@ func (h Handler) ClientHandler() http.HandlerFunc {
 			http.ServeFile(w, r, res.IndexPath)
 			return
 		} else if err != nil {
-			logrus.Errorln(err.Error())
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			h.handleHttpError(w, err, http.StatusInternalServerError)
 			return
 		}
 		// default to using service.FileServer to serve the static dir
@@ -61,10 +61,17 @@ func (h Handler) ClientHandler() http.HandlerFunc {
 }
 
 func (h Handler) ServiceHandler() http.HandlerFunc {
-	serverProxy := h.Service.Server()
 	return func(rw http.ResponseWriter, req *http.Request) {
-		logrus.Infoln(req.URL.Path)
+		serverProxy, svrErr := h.Service.Server()
+		if svrErr != nil {
+			logrus.Errorln(svrErr.Error())
+		}
 		serverProxy.Director(req)
 		serverProxy.ServeHTTP(rw, req)
 	}
+}
+
+func (h Handler) handleHttpError(w http.ResponseWriter, err error, status int) {
+	logrus.Errorln(err.Error())
+	http.Error(w, err.Error(), status)
 }

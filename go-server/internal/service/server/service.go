@@ -15,11 +15,16 @@ type Response struct {
 	TargetUrl string
 }
 
-func InitializeServerSvc(appConfig *config.Config) Service {
+func InitializeServerSvc(appConfig *config.Config) (Service, error) {
+	hostUrl := appConfig.ClientConfig.Url
+	targetUrl := appConfig.ClientConfig.Url
+	if hostUrl == "" || targetUrl == "" {
+		return Service{}, config.MissingField("urls")
+	}
 	return Service{
 		hostUrl:   appConfig.ClientConfig.Url,
 		targetUrl: appConfig.ClientConfig.Url,
-	}
+	}, nil
 }
 
 func (s *Service) Server() Response {

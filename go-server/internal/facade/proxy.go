@@ -1,12 +1,10 @@
 package facade
 
 import (
-	"github.com/sirupsen/logrus"
 	"gitlab.com/ultra207/ultrasound-client/go-server/config"
-	"gitlab.com/ultra207/ultrasound-client/go-server/service/client"
-	"gitlab.com/ultra207/ultrasound-client/go-server/service/server"
-
-	"gitlab.com/ultra207/ultrasound-client/go-server/service/environment"
+	"gitlab.com/ultra207/ultrasound-client/go-server/internal/service/client"
+	"gitlab.com/ultra207/ultrasound-client/go-server/internal/service/environment"
+	"gitlab.com/ultra207/ultrasound-client/go-server/internal/service/server"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
@@ -15,8 +13,8 @@ import (
 
 type ProxyFacade interface {
 	Client(urlPath string) (ClientResponse, error)
-	Server() *httputil.ReverseProxy
-	Environment() environment.Response
+	Server() (*httputil.ReverseProxy, error)
+	Environment() (environment.Response, error)
 }
 
 type Service struct {
@@ -25,44 +23,54 @@ type Service struct {
 	EnvSvc    environment.ServiceI
 }
 
-func NewService(appConfig *config.Config) Service {
-	clientSvc := client.InitializeClientSvc(appConfig)
-	serverSvc := server.InitializeServerSvc(appConfig)
-	envSvc := environment.InitializeEnvService(appConfig)
+func NewService(appConfig *config.Config) (Service, error) {
+	clientSvc, clientErr := client.InitializeClientSvc(appConfig)
+	if clientErr != nil {
+		return Service{}, clientErr
+	}
+	serverSvc, serverErr := server.InitializeServerSvc(appConfig)
+	if clientErr != nil {
+		return Service{}, serverErr
+	}
+	envSvc, envErr := environment.InitializeEnvService(appConfig)
+	if clientErr != nil {
+		return Service{}, envErr
+	}
 	return Service{
 		ClientSvc: &clientSvc,
 		ServerSvc: &serverSvc,
 		EnvSvc:    &envSvc,
-	}
+	}, nil
 }
 
 func (s Service) Client(urlPath string) (ClientResponse, error) {
 	svc := s.ClientSvc.Client()
+	var res ClientResponse
 
 	path, err := filepath.Abs(urlPath)
 	if err != nil {
-		logrus.Errorln(err.Error())
-		return ClientResponse{}, err
+		return res, err
 	}
-	return ClientResponse{
+	res = ClientResponse{
 		// prepend the path with the path to the static directory
 		FilePath: filepath.Join(svc.StaticPath, path),
 		// path to index.html for when file does not exist
 		IndexPath:  filepath.Join(svc.StaticPath, svc.IndexPath),
 		StaticPath: svc.StaticPath,
-	}, nil
+	}
+	return res, nil
 }
 
-func (s Service) Server() *httputil.ReverseProxy {
+func (s Service) Server() (*httputil.ReverseProxy, error) {
 	svc := s.ServerSvc.Server()
 
 	target, svrErr := url.Parse(svc.TargetUrl)
 	if svrErr != nil {
-		panic(svrErr)
+		return nil, svrErr
 	}
 	origin, uiErr := url.Parse(svc.HostUrl)
 	if uiErr != nil {
-		panic(uiErr)
+		return nil, svrErr
 	}
 	director := func(req *http.Request) {
 		req.Header.Add("X-Forwarded-Host", target.Host)
@@ -74,13 +82,13 @@ func (s Service) Server() *httputil.ReverseProxy {
 	}
 	proxy := &httputil.ReverseProxy{Director: director}
 
-	return proxy
+	return proxy, nil
 }
 
-func (s Service) Environment() environment.Response {
+func (s Service) Environment() (environment.Response, error) {
 	envResponse, envErr := s.EnvSvc.Set()
 	if envErr != nil {
-		logrus.Panic(envErr.Error())
+		return environment.Response{}, envErr
 	}
-	return envResponse
+	return envResponse, nil
 }

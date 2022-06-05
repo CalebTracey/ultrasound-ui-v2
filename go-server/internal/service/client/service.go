@@ -17,11 +17,16 @@ type Response struct {
 	IndexPath  string
 }
 
-func InitializeClientSvc(appConfig *config.Config) Service {
-	return Service{
-		staticPath: appConfig.ClientConfig.StaticPath,
-		indexPath:  appConfig.ClientConfig.IndexPath,
+func InitializeClientSvc(appConfig *config.Config) (Service, error) {
+	staticPath := appConfig.ClientConfig.StaticPath
+	indexPath := appConfig.ClientConfig.IndexPath
+	if staticPath == "" || indexPath == "" {
+		return Service{}, config.MissingField("paths")
 	}
+	return Service{
+		staticPath: staticPath,
+		indexPath:  indexPath,
+	}, nil
 }
 
 func (s *Service) Client() Response {
