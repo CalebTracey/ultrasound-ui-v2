@@ -47,11 +47,12 @@ class Http {
     }
 
     initHttp() {
-        // might get the address from the docker container
-        const url =
-            `${process.env.PUBLIC_URL}` === '/web'
-                ? `https://ultrasound-api.herokuapp.com/api/`
-                : 'http://localhost:6080/api/'
+        // this is set to "Prod" in Heroku config vars
+        console.log(`Client Environment: ${process.env.REACT_APP_ENVIRONMENT}`)
+        const url = `https://ultrasound-api.herokuapp.com/api/`
+        //     `${process.env.ENVIRONMENT}` === 'Prod'
+        //         ? `https://ultrasound-api.herokuapp.com/api/`
+        //         : 'http://localhost:6080/api/'
 
         const http = axios.create({
             baseURL: url,
