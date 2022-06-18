@@ -8,7 +8,9 @@ The app serves as a way to view and organize a large library of ultrasound clips
 
 I learned a lot about full stack development while creating this app. I gained a much better understanding of frontend/backend interaction, security, and state management.
 
-The main technologies used are react, redux-toolkit, bootstrap, sass, and JWT.
+Recently I have been working mainly with Go. This led me to take the less conventional route of serving the static content through a Go server rather than a more obvious choice such as nginx.
+
+The main technologies used are react, golang, redux-toolkit, bootstrap, sass, and JWT.
 
 ## Running locally
 
